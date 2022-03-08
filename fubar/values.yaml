@@ -1,36 +1,14 @@
-dependencies:
-- name: postgresql
-  version: 10.13.*
-  repository: https://charts.bitnami.com/bitnami
-  condition: postgresql.enabled
-- name: mariadb
-  version: 9.8.*
-  repository: https://charts.bitnami.com/bitnami
-  condition: mariadb.enabled
-- name: redis
-  version: 15.6.*
-  repository: https://charts.bitnami.com/bitnami
-  condition: redis.enabled
+redis:
+  enabled: true
 
 nextcloud:
-  redis:
-    enabled: true
-    auth:
-      enabled: true
-      password: "apples"
-    master:
-      service:
-        port: 6379
-    replica:
-      replicaCount: 0
-    
-
-  username: admin
-  password: changeme
-  host: test.brad-x.net
-
   image:
     tag: apache
+
+  nextcloud:
+    username: admin
+    password: changeme
+    host: test.brad-x.net
 
   ingress:
     enabled: true
@@ -70,6 +48,17 @@ nextcloud:
 
   readinessProbe:
     enabled: false
+
+  redis:
+    enabled: true
+    auth:
+      enabled: true
+      password: "apples"
+    master:
+      service:
+        port: 6379
+    replica:
+      replicaCount: 0
 
   cronjob:
     enabled: true
