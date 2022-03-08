@@ -12,15 +12,15 @@ dependencies:
   repository: https://charts.bitnami.com/bitnami
   condition: redis.enabled
 
-redis:
-  enabled: true
-  auth:
-    enabled: true
-    password: "apples"
-  replica:
-    replicaCount: 0
-
 nextcloud:
+  redis:
+    enabled: true
+    auth:
+      enabled: true
+      password: "apples"
+    replica:
+      replicaCount: 0
+
   username: admin
   password: changeme
   host: test.brad-x.net
