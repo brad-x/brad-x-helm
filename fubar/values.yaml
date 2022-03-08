@@ -18,8 +18,12 @@ nextcloud:
     auth:
       enabled: true
       password: "apples"
+    master:
+      service:
+        port: 6379
     replica:
       replicaCount: 0
+    
 
   username: admin
   password: changeme
