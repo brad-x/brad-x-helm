@@ -1,6 +1,6 @@
 dependencies:
 - name: nextcloud
-  repository: file://../nextcloud/charts/nextcloud
+  repository: https://nextcloud.github.io/helm/
   version: 2.12.1
-digest: sha256:e4b47bd3cc0f674a4c795740aa3f87bfed9e66be428f5c6e2883b349fae1ea02
-generated: "2022-03-08T11:51:02.959923-05:00"
+digest: sha256:5648f57be84fe81db28903dc43cd0aa4664285bcedc87984df64170f5aec30a4
+generated: "2022-03-08T12:22:08.874236-05:00"
