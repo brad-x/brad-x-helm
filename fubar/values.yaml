@@ -6,20 +6,14 @@ redis:
   replica:
     replicaCount: 0
 
+
 nextcloud:
+  username: admin
+  password: changeme
+  host: test.brad-x.net
+
   image:
     tag: apache
-
-  redis:
-    enabled: true
-    auth:
-      enabled: true
-      password: "apples"
-
-  nextcloud:
-    username: admin
-    password: changeme
-    host: test.brad-x.net
 
   ingress:
     enabled: true
