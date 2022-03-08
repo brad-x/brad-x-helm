@@ -10,6 +10,12 @@ nextcloud:
   image:
     tag: apache
 
+  redis:
+    enabled: true
+    auth:
+      enabled: true
+      password: "apples"
+
   nextcloud:
     username: admin
     password: changeme
