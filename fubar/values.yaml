@@ -1,3 +1,11 @@
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: "apples"
+  replica:
+    replicaCount: 0
+
 nextcloud:
   image:
     tag: apache
@@ -45,14 +53,6 @@ nextcloud:
 
   readinessProbe:
     enabled: false
-
-  redis:
-    enabled: true
-    auth:
-      enabled: true
-      password: "apples"
-    replica:
-      replicaCount: 0
 
   cronjob:
     enabled: true
