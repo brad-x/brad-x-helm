@@ -1,82 +1,79 @@
-# Default values for fubar.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
-replicaCount: 1
-
 image:
-  repository: nginx
-  pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: apache
 
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
-
-podAnnotations: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-service:
-  type: ClusterIP
-  port: 80
+nextcloud:
+  username: admin
+  password: changeme
+  host: test.brad-x.net
 
 ingress:
+  enabled: true
+  className: nginx
+  annotations:
+   nginx.ingress.kubernetes.io/proxy-body-size: 4G
+   nginx.ingress.kubernetes.io/server-snippet: |-
+     server_tokens off;
+     proxy_hide_header X-Powered-By;
+
+     rewrite ^/.well-known/webfinger /public.php?service=webfinger last;
+     rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
+     rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json;
+     location = /.well-known/carddav {
+       return 301 $scheme://$host/remote.php/dav;
+     }
+     location = /.well-known/caldav {
+       return 301 $scheme://$host/remote.php/dav;
+     }
+     location = /robots.txt {
+       allow all;
+       log_not_found off;
+       access_log off;
+     }
+     location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)/ {
+       deny all;
+     }
+     location ~ ^/(?:autotest|occ|issue|indie|db_|console) {
+       deny all;
+     }
+
+nginx:
   enabled: false
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
-autoscaling:
+livenessProbe:
   enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
-nodeSelector: {}
+readinessProbe:
+  enabled: false
 
-tolerations: []
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    password: "apples"
+  replica:
+    replicaCount: 0
 
-affinity: {}
+cronjob:
+  enabled: true
+  curlInsecure: true
+
+internalDatabase:
+  enabled: false
+
+externalDatabase:
+  enabled: true
+  type: mysql
+  host: 192.168.16.3
+  database: k3s_nextcloud
+  user: k3s_nextcloud
+  password: apples
+
+persistence:
+  enabled: true
+  existingClaim: "nextcloud-brad"
+  storageClass: nfs-local
+  accessMode: ReadWriteMany
+  nextcloudData:
+    enabled: true
+    storageClass: nfs-local
+    existingClaim: "nextcloud-brad-data"
