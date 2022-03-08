@@ -1,79 +1,80 @@
-image:
-  tag: apache
-
 nextcloud:
-  username: admin
-  password: changeme
-  host: test.brad-x.net
+  image:
+    tag: apache
 
-ingress:
-  enabled: true
-  className: nginx
-  annotations:
-   nginx.ingress.kubernetes.io/proxy-body-size: 4G
-   nginx.ingress.kubernetes.io/server-snippet: |-
-     server_tokens off;
-     proxy_hide_header X-Powered-By;
+  nextcloud:
+    username: admin
+    password: changeme
+    host: test.brad-x.net
 
-     rewrite ^/.well-known/webfinger /public.php?service=webfinger last;
-     rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
-     rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json;
-     location = /.well-known/carddav {
-       return 301 $scheme://$host/remote.php/dav;
-     }
-     location = /.well-known/caldav {
-       return 301 $scheme://$host/remote.php/dav;
-     }
-     location = /robots.txt {
-       allow all;
-       log_not_found off;
-       access_log off;
-     }
-     location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)/ {
-       deny all;
-     }
-     location ~ ^/(?:autotest|occ|issue|indie|db_|console) {
-       deny all;
-     }
-
-nginx:
-  enabled: false
-
-livenessProbe:
-  enabled: false
-
-readinessProbe:
-  enabled: false
-
-redis:
-  enabled: true
-  auth:
+  ingress:
     enabled: true
-    password: "apples"
-  replica:
-    replicaCount: 0
+    className: nginx
+    annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 4G
+    nginx.ingress.kubernetes.io/server-snippet: |-
+      server_tokens off;
+      proxy_hide_header X-Powered-By;
 
-cronjob:
-  enabled: true
-  curlInsecure: true
+      rewrite ^/.well-known/webfinger /public.php?service=webfinger last;
+      rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
+      rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json;
+      location = /.well-known/carddav {
+        return 301 $scheme://$host/remote.php/dav;
+      }
+      location = /.well-known/caldav {
+        return 301 $scheme://$host/remote.php/dav;
+      }
+      location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+      }
+      location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)/ {
+        deny all;
+      }
+      location ~ ^/(?:autotest|occ|issue|indie|db_|console) {
+        deny all;
+      }
 
-internalDatabase:
-  enabled: false
+  nginx:
+    enabled: false
 
-externalDatabase:
-  enabled: true
-  type: mysql
-  host: 192.168.16.3
-  database: k3s_nextcloud
-  user: k3s_nextcloud
-  password: apples
+  livenessProbe:
+    enabled: false
 
-persistence:
-  enabled: true
-  existingClaim: "nextcloud-brad"
-  storageClass: nfs-local
-  accessMode: ReadWriteMany
-  nextcloudData:
+  readinessProbe:
+    enabled: false
+
+  redis:
     enabled: true
+    auth:
+      enabled: true
+      password: "apples"
+    replica:
+      replicaCount: 0
+
+  cronjob:
+    enabled: true
+    curlInsecure: true
+
+  internalDatabase:
+    enabled: false
+
+  externalDatabase:
+    enabled: true
+    type: mysql
+    host: 192.168.16.3
+    database: k3s_nextcloud
+    user: k3s_nextcloud
+    password: apples
+
+  persistence:
+    enabled: true
+    existingClaim: "nextcloud-brad"
     storageClass: nfs-local
-    existingClaim: "nextcloud-brad-data"
+    accessMode: ReadWriteMany
+    nextcloudData:
+      enabled: true
+      storageClass: nfs-local
+      existingClaim: "nextcloud-brad-data"
